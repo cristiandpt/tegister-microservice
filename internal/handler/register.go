@@ -2,6 +2,8 @@ package handler
 
 import (
 	jsonparse "encoding/json"
+	database "github.com/cristiandpt/healthcare/register/internal/database/config"
+	entities "github.com/cristiandpt/healthcare/register/internal/database/entity"
 	"github.com/cristiandpt/healthcare/register/internal/model"
 	"github.com/julienschmidt/httprouter"
 	"io"
@@ -10,6 +12,12 @@ import (
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+
+	db := database.GetDB()
+
+	password := "securepassword999"
+	hashedPassword := "$2a$10$somehashedpassword" // In a real scenario, hash the password
+
 	var user model.UserRegisterDTO
 	postBody, readerErr := io.ReadAll(r.Body)
 	if readerErr != nil {
@@ -23,6 +31,20 @@ func RegisterUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
+	newUser := entities.User{
+		Username:     user.Email,
+		Email:        user.Email,
+		PasswordHash: hashedPassword,
+	}
+
+	result := db.Create(&newUser)
+	if result.Error != nil {
+		log.Fatalf("Failed to create user: %v", result.Error)
+		return
+	}
+
+	log.Printf("GORM with pgx User registered successfully with ID: %s, Username: %s, Email: %s", newUser.ID, newUser.Username, newUser.Email)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	response := map[string]any{"message": "User created successfully"}
