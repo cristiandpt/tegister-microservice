@@ -1,0 +1,56 @@
+# Binaries
+*.exe
+*.o
+*.a
+*.so
+*.dylib
+
+# Test cache
+_test
+*.test
+*.test.exe
+
+# Dependencies (Go modules)
+/vendor
+
+# Go build cache
+/go-build
+
+# IDE specific files
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# OS Specific files
+.DS_Store
+Thumbs.db
+
+# Coverage files
+coverage.out
+coverage.txt
+
+# Temporary files
+*~
+\#*#
+
+# Logs
+*.log
+
+# Auto-generated files (adjust as needed)
+# If you generate code, you might want to ignore the output directory
+# generated/
+
+# Docker related
+docker-compose.override.yml
+.dockerenv
+
+# Sensitive files (adjust as needed)
+# *.env
+# config.yaml
+
+# Fuzzing artifacts
+/fuzz
+/fuzzdata
+*.go~
