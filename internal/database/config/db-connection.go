@@ -54,7 +54,7 @@ func GetDB() *gorm.DB {
 	return DB
 }
 
-func AutoMigrate(models ...any) error {
+func AutoMigrate(models ...interface{}) error {
 	if DB == nil {
 		return fmt.Errorf("database connection not initialized")
 	}

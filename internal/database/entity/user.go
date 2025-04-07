@@ -1,4 +1,4 @@
-package entity
+package database
 
 import (
 	"github.com/google/uuid"
