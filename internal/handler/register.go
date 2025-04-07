@@ -5,6 +5,7 @@ import (
 	database "github.com/cristiandpt/healthcare/register/internal/database/config"
 	entities "github.com/cristiandpt/healthcare/register/internal/database/entity"
 	"github.com/cristiandpt/healthcare/register/internal/model"
+	"github.com/cristiandpt/healthcare/register/util"
 	"github.com/julienschmidt/httprouter"
 	"io"
 	"log"
@@ -14,9 +15,6 @@ import (
 func RegisterUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	db := database.GetDB()
-
-	password := "securepassword999"
-	hashedPassword := "$2a$10$somehashedpassword" // In a real scenario, hash the password
 
 	var user model.UserRegisterDTO
 	postBody, readerErr := io.ReadAll(r.Body)
@@ -31,10 +29,15 @@ func RegisterUser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
+	encryptedPassword, err := util.EncryptPassword(user.Password)
+	if err != nil {
+		log.Fatalf("Encryption failed: %v", err)
+	}
+
 	newUser := entities.User{
 		Username:     user.Email,
 		Email:        user.Email,
-		PasswordHash: hashedPassword,
+		PasswordHash: encryptedPassword,
 	}
 
 	result := db.Create(&newUser)
